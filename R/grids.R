@@ -35,56 +35,64 @@
 #' @export
 #'
 grid_regular <- function(..., levels = 3, original = TRUE) {
+
   param_quos <- quos(...)
-  if (length(param_quos) == 0)
-    stop("At least one parameter object is required.", call. = FALSE)
+
+  check_empty_quos(param_quos)
+
   params <- map(param_quos, eval_tidy)
+
+  check_params(params)
+
   param_names <- map_chr(params, function(x) names(x$label))
-  is_param <- map_lgl(params, function(x) inherits(x, "param"))
-  if (!all(is_param))
-    stop("All objects must have class 'param'.", call. = FALSE)
-  bad_param <- has_unknowns(params)
-  if (any(bad_param))
-    stop("At least one parameter contains unknowns.", call. = FALSE)
+
   param_labs <- map_chr(params, function(x) x$label)
   names(param_labs) <- param_names
 
   # check levels
   p <- length(levels)
-  if (p > 1 && p != length(param_quos))
-    stop("`levels` should have length 1 or ", length(param_quos), call. = FALSE)
+  if (p > 1 && p != length(param_quos)) {
+    abort(glue("`levels` should have length 1 or {length(param_quos)}."))
+  }
 
   if (p == 1) {
     param_seq <- map(params, value_seq, n = levels, original = original)
-  } else {
+  }
+  else {
     param_seq <- map2(params, as.list(levels), value_seq, original = original)
   }
 
   names(param_seq) <- param_names
+
   param_set <- expand.grid(param_seq, stringsAsFactors = FALSE)
+
   new_grid(param_set, labels = param_labs, cls = c("grid_regular", "param_grid"))
+
 }
 
 #' @export
 #' @rdname grid_regular
 grid_random <- function(..., size = 5, original = TRUE) {
+
   param_quos <- quos(...)
-  if (length(param_quos) == 0)
-    stop("At least one parameter object is required.", call. = FALSE)
+
+  check_empty_quos(param_quos)
+
   params <- map(param_quos, eval_tidy)
+
+  check_params(params)
+
   param_names <- map_chr(params, function(x) names(x$label))
-  is_param <- map_lgl(params, function(x) inherits(x, "param"))
-  if (!all(is_param))
-    stop("All objects must have class 'param'.", call. = FALSE)
-  bad_param <- has_unknowns(params)
-  if(any(bad_param))
-    stop("At least one parameter contains unknowns.", call. = FALSE)
+
   param_labs <- map_chr(params, function(x) x$label)
 
   # for now assume equal levels
   param_set <- map_dfc(params, value_sample, n = size, original = original)
+
   names(param_set) <- param_names
+
   new_grid(param_set, labels = param_labs, cls = c("grid_random", "param_grid"))
+
 }
 
 #' @importFrom tibble as_tibble
@@ -93,4 +101,30 @@ new_grid <- function(x, labels, cls) {
   attr(x, "info") <- list(labels = labels)
   class(x) <- c(cls, class(x))
   x
+}
+
+check_empty_quos <- function(x) {
+
+  if (length(x) == 0) {
+    abort("At least one parameter object is required.")
+  }
+
+  invisible(x)
+}
+
+check_params <- function(x) {
+
+  is_param <- map_lgl(x, function(x) inherits(x, "param"))
+
+  if (!all(is_param)) {
+    abort("All objects must have class 'param'.")
+  }
+
+  bad_param <- has_unknowns(x)
+
+  if (any(bad_param)) {
+    abort("At least one parameter contains unknowns.")
+  }
+
+  invisible(x)
 }
