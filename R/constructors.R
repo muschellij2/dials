@@ -31,6 +31,12 @@
 #' printing and plotting. The name should match the object name (e.g.
 #' `"mtry"`, `"neighbors"`, etc.)
 #'
+#' @param id An optional single character string. This should be either the
+#' name of a `model_spec` class from `parsnip` (such as `rand_forest`) or
+#' the unique `id` of a step from `recipes`. It is only useful to set this
+#' manually in the rare circumstance of conflicting parameters (such as two
+#' `num_comp` parameters).
+#'
 #' @param finalize A function that can be used to set the data-specific
 #' values of a parameter (such as the `range`).
 #'
@@ -77,6 +83,7 @@ new_quant_param <- function(type = c("double", "integer"),
                             trans = NULL,
                             values = NULL,
                             label = NULL,
+                            id = NULL,
                             finalize = NULL) {
 
   type <- match.arg(type)
@@ -104,6 +111,7 @@ new_quant_param <- function(type = c("double", "integer"),
 
   check_label(label)
   check_finalize(finalize)
+  check_id(id)
 
   names(range) <- c("lower", "upper")
   names(inclusive) <- c("lower", "upper")
@@ -115,6 +123,7 @@ new_quant_param <- function(type = c("double", "integer"),
     trans = trans,
     default = default,
     label = label,
+    id = id,
     finalize = finalize
   )
 
@@ -153,6 +162,7 @@ new_qual_param <- function(type = c("character", "logical"),
                            values,
                            default = unknown(),
                            label = NULL,
+                           id = NULL,
                            finalize = NULL) {
 
   type <- match.arg(type)
@@ -173,12 +183,14 @@ new_qual_param <- function(type = c("character", "logical"),
 
   check_label(label)
   check_finalize(finalize)
+  check_id(id)
 
   res <- list(
     type = type,
     default = default,
     label = label,
     values = values,
+    id = id,
     finalize = finalize
   )
 
@@ -212,7 +224,11 @@ print.quant_param <- function(x, digits = 3, ...) {
 
   vals <- map_chr(x$range, format_range_val)
   bnds <- format_bounds(x$inclusive)
-  cat(glue('{bnds[1]}{vals[1]}, {vals[2]}{bnds[2]}\n'))
+  cat(glue('{bnds[1]}{vals[1]}, {vals[2]}{bnds[2]}'), "\n")
+
+  if (!is.null(x$id)) {
+    cat(glue("ID: '{x$id}'\n"))
+  }
 
   invisible(x)
 }
@@ -245,6 +261,10 @@ print.qual_param <- function(x, ...) {
     ),
     "\n"
   )
+
+  if (!is.null(x$id)) {
+    cat(glue("ID: '{x$id}'\n"))
+  }
 
   invisible(x)
 }

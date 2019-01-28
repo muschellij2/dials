@@ -8,10 +8,10 @@
 \usage{
 new_quant_param(type = c("double", "integer"), range, inclusive,
   default = unknown(), trans = NULL, values = NULL, label = NULL,
-  finalize = NULL)
+  id = NULL, finalize = NULL)
 
 new_qual_param(type = c("character", "logical"), values,
-  default = unknown(), label = NULL, finalize = NULL)
+  default = unknown(), label = NULL, id = NULL, finalize = NULL)
 }
 \arguments{
 \item{type}{A single character value. For quantitative parameters, valid
@@ -40,6 +40,12 @@ parameters, these override the \code{range} when generating sequences if set.}
 \item{label}{An optional named character string that can be used for
 printing and plotting. The name should match the object name (e.g.
 \code{"mtry"}, \code{"neighbors"}, etc.)}
+
+\item{id}{An optional single character string. This should be either the
+name of a \code{model_spec} class from \code{parsnip} (such as \code{rand_forest}) or
+the unique \code{id} of a step from \code{recipes}. It is only useful to set this
+manually in the rare circumstance of conflicting parameters (such as two
+\code{num_comp} parameters).}
 
 \item{finalize}{A function that can be used to set the data-specific
 values of a parameter (such as the \code{range}).}

@@ -10,17 +10,17 @@
 \alias{max_tokens}
 \title{Parameter functions related to text analysis.}
 \usage{
-weight(range = c(-10, 0), trans = log10_trans())
+weight(range = c(-10, 0), trans = log10_trans(), id = NULL)
 
-weight_scheme(values = values_weight_scheme)
+weight_scheme(values = values_weight_scheme, id = NULL)
 
-token(values = values_token)
+token(values = values_token, id = NULL)
 
-max_times(range = c(1L, as.integer(10^5)), trans = NULL)
+max_times(range = c(1L, as.integer(10^5)), trans = NULL, id = NULL)
 
-min_times(range = c(0L, 1000L), trans = NULL)
+min_times(range = c(0L, 1000L), trans = NULL, id = NULL)
 
-max_tokens(range = c(0L, as.integer(10^5)), trans = NULL)
+max_tokens(range = c(0L, as.integer(10^5)), trans = NULL, id = NULL)
 }
 \arguments{
 \item{range}{A two-element vector holding the smallest and largest possible
@@ -33,6 +33,12 @@ an educated guess at the range of each parameter.}
 \code{scales::log10_trans()} or \code{scales::reciprocal_trans()}. If not provided,
 the default is used which matches the units used in \code{range}. If no
 transformation, \code{NULL}.}
+
+\item{id}{An optional single character string. This should be either the
+name of a \code{model_spec} class from \code{parsnip} (such as \code{rand_forest}) or
+the unique \code{id} of a step from \code{recipes}. It is only useful to set this
+manually in the rare circumstance of conflicting parameters (such as two
+\code{num_comp} parameters).}
 
 \item{values}{A vector of possible parameter values. For qualitative
 parameters, character and logical defaults have been set, but can be modified

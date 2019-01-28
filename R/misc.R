@@ -35,13 +35,13 @@ check_installs <- function (x) {
 
 check_label <- function(txt) {
   if (is.null(txt))
-    stop("`label` should be a single named character string or NULL.", 
+    stop("`label` should be a single named character string or NULL.",
          call. = FALSE)
   if (!is.character(txt) || length(txt) > 1)
-    stop("`label` should be a single named character string or NULL.", 
+    stop("`label` should be a single named character string or NULL.",
          call. = FALSE)
   if(length(names(txt)) != 1)
-    stop("`label` should be a single named character string or NULL.", 
+    stop("`label` should be a single named character string or NULL.",
          call. = FALSE)
   invisible(txt)
 }
@@ -50,4 +50,10 @@ check_finalize <- function(x) {
   if (!is.null(x) & !is.function(x))
     stop("`finalize` should be NULL or a function.", .call = FALSE)
   invisible(x)
+}
+
+check_id <- function(x) {
+  if (!is.null(x) & !is.character(x)) {
+    abort("`id` should be NULL or a character.")
+  }
 }

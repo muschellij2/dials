@@ -32,6 +32,8 @@ NULL
 #' the default is used which matches the units used in `range`. If no
 #' transformation, `NULL`.
 #'
+#' @inheritParams new_quant_param
+#'
 #' @details
 #' These functions generate parameters that are useful when the model is
 #' based on trees or rules.
@@ -74,13 +76,14 @@ NULL
 #' @aliases tree_parameters
 #' @export
 #' @rdname tree_parameters
-mtry <- function(range = c(1L, unknown()), trans = NULL) {
+mtry <- function(range = c(1L, unknown()), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(mtry = "# Randomly Selected Predictors"),
+    id = id,
     finalize = get_p
   )
 }
@@ -88,65 +91,70 @@ mtry <- function(range = c(1L, unknown()), trans = NULL) {
 #' @export
 #' @rdname tree_parameters
 #' @importFrom scales log10_trans
-mtry_long <- function(range = c(0L, unknown()), trans = log10_trans()) {
+mtry_long <- function(range = c(0L, unknown()), trans = log10_trans(), id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(mtry_long = "# Randomly Selected Predictors"),
+    id = id,
     finalize = get_log_p
   )
 }
 
 #' @rdname tree_parameters
 #' @export
-trees <- function(range = c(1L, 2000L), trans = NULL) {
+trees <- function(range = c(1L, 2000L), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(trees = "# Trees"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @rdname tree_parameters
 #' @export
-min_n <- function(range = c(2L, unknown()), trans = NULL) {
+min_n <- function(range = c(2L, unknown()), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(min_n = "Minimal Node Size"),
+    id = id,
     finalize = get_n_frac
   )
 }
 
 #' @rdname tree_parameters
 #' @export
-sample_size <- function(range = c(unknown(), unknown()), trans = NULL) {
+sample_size <- function(range = c(unknown(), unknown()), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(sample_size = "# Observations Sampled"),
+    id = id,
     finalize = get_n_frac_range
   )
 }
 
 #' @rdname tree_parameters
 #' @export
-learn_rate <- function(range = c(unknown(), unknown()), trans = NULL) {
+learn_rate <- function(range = c(unknown(), unknown()), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(learn_rate = "Learning Rate"),
+    id = id,
     finalize = NULL
   )
 }
@@ -154,50 +162,54 @@ learn_rate <- function(range = c(unknown(), unknown()), trans = NULL) {
 
 #' @rdname tree_parameters
 #' @export
-loss_reduction <- function(range = c(unknown(), unknown()), trans = NULL) {
+loss_reduction <- function(range = c(unknown(), unknown()), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(loss_reduction = "Minimum Loss Reduction"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @rdname tree_parameters
 #' @export
-tree_depth <- function(range = c(2L, 15L), trans = NULL) {
+tree_depth <- function(range = c(2L, 15L), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(tree_depth = "Tree Depth"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname tree_parameters
-prune <- function(values = c(TRUE, FALSE)) {
+prune <- function(values = c(TRUE, FALSE), id = NULL) {
   new_qual_param(
     type = "logical",
     values = values,
     label = c(prune = "Pruning"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname tree_parameters
-Cp <- function(range = c(-10, -1), trans = log10_trans()) {
+Cp <- function(range = c(-10, -1), trans = log10_trans(), id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(Cp = "Cost-Complexity Parameter"),
+    id = id,
     finalize = NULL
   )
 }
@@ -263,37 +275,40 @@ Cp <- function(range = c(-10, -1), trans = log10_trans()) {
 #' @aliases para_parameters
 #' @rdname para_parameters
 #' @export
-dropout <- function(range = c(0, 1), trans = NULL) {
+dropout <- function(range = c(0, 1), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, FALSE),
     trans = trans,
     label = c(dropout = "Dropout Rate"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @rdname para_parameters
 #' @export
-epochs <- function(range = c(1L, 1000L), trans = NULL) {
+epochs <- function(range = c(1L, 1000L), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = c(1L, 1000L),
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(epochs = "# Epochs"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @rdname para_parameters
 #' @export
-activation <- function(values = values_activation) {
+activation <- function(values = values_activation, id = NULL) {
   new_qual_param(
     type = "character",
     values = values,
     label = c(activation = "Activation Function"),
+    id = id,
     finalize = NULL
   )
 }
@@ -304,156 +319,168 @@ values_activation <- c("linear", "softmax", "relu", "elu")
 
 #' @rdname para_parameters
 #' @export
-mixture <- function(range = c(0, 1), trans = NULL) {
+mixture <- function(range = c(0, 1), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(mixture = "% lasso Penalty"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @rdname para_parameters
 #' @export
-penalty <- function(range = c(-10, 0), trans = log10_trans()) {
+penalty <- function(range = c(-10, 0), trans = log10_trans(), id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(penalty = "Amount of Regularization"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname para_parameters
-rbf_sigma <- function(range = c(-10, 0), trans = log10_trans()) {
+rbf_sigma <- function(range = c(-10, 0), trans = log10_trans(), id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(rbf_sigma = "Radial Basis Function sigma"),
+    id = id,
     finalize = get_rbf_range
   )
 }
 
 #' @export
 #' @rdname para_parameters
-prod_degree <- function(range = c(1L, 2L), trans = NULL) {
+prod_degree <- function(range = c(1L, 2L), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(prod_degree = "Degree of Interaction"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname para_parameters
-num_terms <- function(range = c(1L, unknown()), trans = NULL) {
+num_terms <- function(range = c(1L, unknown()), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(num_terms = "# Model Terms"),
+    id = id,
     finalize = get_p
   )
 }
 
 #' @export
 #' @rdname para_parameters
-num_comp <- function(range = c(1L, unknown()), trans = NULL) {
+num_comp <- function(range = c(1L, unknown()), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(num_comp = "# Components"),
+    id = id,
     finalize = get_p
   )
 }
 
 #' @export
 #' @rdname para_parameters
-cost <- function(range = c(-10, -1), trans = log2_trans()) {
+cost <- function(range = c(-10, -1), trans = log2_trans(), id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(cost = "Cost"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname para_parameters
-scale_factor <- function(range = c(-10, -1), trans = log2_trans()) {
+scale_factor <- function(range = c(-10, -1), trans = log2_trans(), id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(cost = "Scale Factor"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname para_parameters
-margin <- function(range = c(0, .2), trans = NULL) {
+margin <- function(range = c(0, .2), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(cost = "Insensitivity Margin"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname para_parameters
-degree <- function(range = c(1, 3), trans = NULL) {
+degree <- function(range = c(1, 3), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(degree = "Polynomial Degree"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname para_parameters
-deg_free <- function(range = c(1, 5), trans = NULL) {
+deg_free <- function(range = c(1, 5), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(deg_free = "Degrees of Freedom"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname para_parameters
-hidden_units <- function(range = c(1L, 10), trans = NULL) {
+hidden_units <- function(range = c(1L, 10), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(hidden_units = "# Hidden Units"),
+    id = id,
     finalize = NULL
   )
 }
@@ -461,25 +488,27 @@ hidden_units <- function(range = c(1L, 10), trans = NULL) {
 #' @export
 #' @rdname para_parameters
 #' @importFrom scales log2_trans
-batch_size <- function(range = c(unknown(), unknown()), trans = log2_trans()) {
+batch_size <- function(range = c(unknown(), unknown()), trans = log2_trans(), id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(cost = "Batch Size"),
+    id = id,
     finalize = get_batch_sizes
   )
 }
 
 #' @export
 #' @rdname para_parameters
-prune_method <- function(values = values_prune_method) {
+prune_method <- function(values = values_prune_method, id = NULL) {
   new_qual_param(
     type     = c("character"),
     values   = values,
     default  = "backward",
     label    = c(prune_method = "Pruning Method"),
+    id = id,
     finalize = NULL
   )
 }
@@ -525,11 +554,12 @@ values_prune_method <- c(
 #' @aliases misc_parameters
 #' @rdname misc_parameters
 #' @export
-weight_func <- function(values = values_weight_func) {
+weight_func <- function(values = values_weight_func, id = NULL) {
   new_qual_param(
     type = "character",
     values = values,
     label = c(weight_func = "Distance Weighting Function"),
+    id = id,
     finalize = NULL
   )
 }
@@ -543,11 +573,12 @@ values_weight_func <- c("rectangular", "triangular", "epanechnikov",
 # in reference to survival::survreg
 #' @rdname misc_parameters
 #' @export
-surv_dist <- function(values = values_surv_dist) {
+surv_dist <- function(values = values_surv_dist, id = NULL) {
   new_qual_param(
     type = "character",
     values = values,
     label = c(surv_dist = "Distribution"),
+    id = id,
     finalize = NULL
   )
 }
@@ -559,7 +590,7 @@ values_surv_dist <- c("weibull", "exponential", "gaussian",
 
 #' @export
 #' @rdname misc_parameters
-Laplace <- function(range = c(0, 3), trans = NULL) {
+Laplace <- function(range = c(0, 3), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
@@ -567,6 +598,7 @@ Laplace <- function(range = c(0, 3), trans = NULL) {
     trans = trans,
     default = 0,
     label = c(Laplace = "Laplace Correction"),
+    id = id,
     finalize = NULL
   )
 }
@@ -574,33 +606,36 @@ Laplace <- function(range = c(0, 3), trans = NULL) {
 
 #' @export
 #' @rdname misc_parameters
-neighbors <- function(range = c(1L, unknown()), trans = NULL) {
+neighbors <- function(range = c(1L, unknown()), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(neighbors = "# Nearest Neighbors"),
+    id = id,
     finalize = get_n_frac
   )
 }
 
 #' @export
 #' @rdname misc_parameters
-dist_power <- function(range = c(1, 2), trans = NULL) {
+dist_power <- function(range = c(1, 2), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
-    label = c(neighbors = "Minkowski Distance Order")
+    label = c(neighbors = "Minkowski Distance Order"),
+    id = id,
+    finalize = NULL
   )
 }
 
 
 #' @export
 #' @rdname misc_parameters
-threshold <- function(range = c(0, 1), trans = NULL) {
+threshold <- function(range = c(0, 1), trans = NULL, id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
@@ -608,6 +643,7 @@ threshold <- function(range = c(0, 1), trans = NULL) {
     trans = trans,
     default = 0.5,
     label = c(threshold = "Threshold"),
+    id = id,
     finalize = NULL
   )
 }
@@ -649,24 +685,26 @@ NULL
 
 #' @export
 #' @rdname text_parameters
-weight <- function(range = c(-10, 0), trans = log10_trans()) {
+weight <- function(range = c(-10, 0), trans = log10_trans(), id = NULL) {
   new_quant_param(
     type = "double",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(weight = "Weight"),
+    id = id,
     finalize = NULL
   )
 }
 
 #' @export
 #' @rdname text_parameters
-weight_scheme <- function(values = values_weight_scheme) {
+weight_scheme <- function(values = values_weight_scheme, id = NULL) {
   new_qual_param(
     type = "character",
     values = values,
     label = c(weight_scheme = "Term Frequency Weight Method"),
+    id = id,
     finalize = NULL
   )
 }
@@ -679,11 +717,12 @@ values_weight_scheme <- c("raw count", "binary",
 
 #' @export
 #' @rdname text_parameters
-token <- function(values = values_token) {
+token <- function(values = values_token, id = NULL) {
   new_qual_param(
     type = "character",
     values = values,
     label = c(weight_scheme = "Token Unit"),
+    id = id,
     finalize = NULL
   )
 }
@@ -697,13 +736,14 @@ values_token <- c("words", "characters", "character_shingle",
 
 #' @export
 #' @rdname text_parameters
-max_times <- function(range = c(1L, as.integer(10^5)), trans = NULL) {
+max_times <- function(range = c(1L, as.integer(10^5)), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(max_times = "Maximum Token Frequency"),
+    id = id,
     finalize = NULL
   )
 }
@@ -711,13 +751,14 @@ max_times <- function(range = c(1L, as.integer(10^5)), trans = NULL) {
 
 #' @export
 #' @rdname text_parameters
-min_times <- function(range = c(0L, 1000L), trans = NULL) {
+min_times <- function(range = c(0L, 1000L), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(min_times = "Minimum Token Frequency"),
+    id = id,
     finalize = NULL
   )
 }
@@ -725,13 +766,14 @@ min_times <- function(range = c(0L, 1000L), trans = NULL) {
 
 #' @export
 #' @rdname text_parameters
-max_tokens <- function(range = c(0L, as.integer(10^5)), trans = NULL) {
+max_tokens <- function(range = c(0L, as.integer(10^5)), trans = NULL, id = NULL) {
   new_quant_param(
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
     label = c(min_times = "# Retained Tokens"),
+    id = id,
     finalize = NULL
   )
 }

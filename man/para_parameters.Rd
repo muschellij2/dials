@@ -21,39 +21,40 @@
 \alias{prune_method}
 \title{Parameter functions related to parametric models.}
 \usage{
-dropout(range = c(0, 1), trans = NULL)
+dropout(range = c(0, 1), trans = NULL, id = NULL)
 
-epochs(range = c(1L, 1000L), trans = NULL)
+epochs(range = c(1L, 1000L), trans = NULL, id = NULL)
 
-activation(values = values_activation)
+activation(values = values_activation, id = NULL)
 
-mixture(range = c(0, 1), trans = NULL)
+mixture(range = c(0, 1), trans = NULL, id = NULL)
 
-penalty(range = c(-10, 0), trans = log10_trans())
+penalty(range = c(-10, 0), trans = log10_trans(), id = NULL)
 
-rbf_sigma(range = c(-10, 0), trans = log10_trans())
+rbf_sigma(range = c(-10, 0), trans = log10_trans(), id = NULL)
 
-prod_degree(range = c(1L, 2L), trans = NULL)
+prod_degree(range = c(1L, 2L), trans = NULL, id = NULL)
 
-num_terms(range = c(1L, unknown()), trans = NULL)
+num_terms(range = c(1L, unknown()), trans = NULL, id = NULL)
 
-num_comp(range = c(1L, unknown()), trans = NULL)
+num_comp(range = c(1L, unknown()), trans = NULL, id = NULL)
 
-cost(range = c(-10, -1), trans = log2_trans())
+cost(range = c(-10, -1), trans = log2_trans(), id = NULL)
 
-scale_factor(range = c(-10, -1), trans = log2_trans())
+scale_factor(range = c(-10, -1), trans = log2_trans(), id = NULL)
 
-margin(range = c(0, 0.2), trans = NULL)
+margin(range = c(0, 0.2), trans = NULL, id = NULL)
 
-degree(range = c(1, 3), trans = NULL)
+degree(range = c(1, 3), trans = NULL, id = NULL)
 
-deg_free(range = c(1, 5), trans = NULL)
+deg_free(range = c(1, 5), trans = NULL, id = NULL)
 
-hidden_units(range = c(1L, 10), trans = NULL)
+hidden_units(range = c(1L, 10), trans = NULL, id = NULL)
 
-batch_size(range = c(unknown(), unknown()), trans = log2_trans())
+batch_size(range = c(unknown(), unknown()), trans = log2_trans(),
+  id = NULL)
 
-prune_method(values = values_prune_method)
+prune_method(values = values_prune_method, id = NULL)
 }
 \arguments{
 \item{range}{A two-element vector holding the smallest and largest possible
@@ -66,6 +67,12 @@ an educated guess at the range of each parameter.}
 \code{scales::log10_trans()} or \code{scales::reciprocal_trans()}. If not provided,
 the default is used which matches the units used in \code{range}. If no
 transformation, \code{NULL}.}
+
+\item{id}{An optional single character string. This should be either the
+name of a \code{model_spec} class from \code{parsnip} (such as \code{rand_forest}) or
+the unique \code{id} of a step from \code{recipes}. It is only useful to set this
+manually in the rare circumstance of conflicting parameters (such as two
+\code{num_comp} parameters).}
 
 \item{values}{A vector of possible parameter values. For qualitative
 parameters, character and logical defaults have been set, but can be modified

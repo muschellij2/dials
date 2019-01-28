@@ -10,22 +10,28 @@
 \alias{threshold}
 \title{Parameter functions related to miscellaneous models.}
 \usage{
-weight_func(values = values_weight_func)
+weight_func(values = values_weight_func, id = NULL)
 
-surv_dist(values = values_surv_dist)
+surv_dist(values = values_surv_dist, id = NULL)
 
-Laplace(range = c(0, 3), trans = NULL)
+Laplace(range = c(0, 3), trans = NULL, id = NULL)
 
-neighbors(range = c(1L, unknown()), trans = NULL)
+neighbors(range = c(1L, unknown()), trans = NULL, id = NULL)
 
-dist_power(range = c(1, 2), trans = NULL)
+dist_power(range = c(1, 2), trans = NULL, id = NULL)
 
-threshold(range = c(0, 1), trans = NULL)
+threshold(range = c(0, 1), trans = NULL, id = NULL)
 }
 \arguments{
 \item{values}{A vector of possible parameter values. For qualitative
 parameters, character and logical defaults have been set, but can be modified
 as needed.}
+
+\item{id}{An optional single character string. This should be either the
+name of a \code{model_spec} class from \code{parsnip} (such as \code{rand_forest}) or
+the unique \code{id} of a step from \code{recipes}. It is only useful to set this
+manually in the rare circumstance of conflicting parameters (such as two
+\code{num_comp} parameters).}
 
 \item{range}{A two-element vector holding the smallest and largest possible
 values, respectively. If these cannot be set when the parameter is created,

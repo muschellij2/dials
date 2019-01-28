@@ -14,25 +14,26 @@
 \alias{Cp}
 \title{Parameter functions related to tree- and rule-based models.}
 \usage{
-mtry(range = c(1L, unknown()), trans = NULL)
+mtry(range = c(1L, unknown()), trans = NULL, id = NULL)
 
-mtry_long(range = c(0L, unknown()), trans = log10_trans())
+mtry_long(range = c(0L, unknown()), trans = log10_trans(), id = NULL)
 
-trees(range = c(1L, 2000L), trans = NULL)
+trees(range = c(1L, 2000L), trans = NULL, id = NULL)
 
-min_n(range = c(2L, unknown()), trans = NULL)
+min_n(range = c(2L, unknown()), trans = NULL, id = NULL)
 
-sample_size(range = c(unknown(), unknown()), trans = NULL)
+sample_size(range = c(unknown(), unknown()), trans = NULL, id = NULL)
 
-learn_rate(range = c(unknown(), unknown()), trans = NULL)
+learn_rate(range = c(unknown(), unknown()), trans = NULL, id = NULL)
 
-loss_reduction(range = c(unknown(), unknown()), trans = NULL)
+loss_reduction(range = c(unknown(), unknown()), trans = NULL,
+  id = NULL)
 
-tree_depth(range = c(2L, 15L), trans = NULL)
+tree_depth(range = c(2L, 15L), trans = NULL, id = NULL)
 
-prune(values = c(TRUE, FALSE))
+prune(values = c(TRUE, FALSE), id = NULL)
 
-Cp(range = c(-10, -1), trans = log10_trans())
+Cp(range = c(-10, -1), trans = log10_trans(), id = NULL)
 }
 \arguments{
 \item{range}{A two-element vector holding the smallest and largest possible
@@ -45,6 +46,12 @@ an educated guess at the range of each parameter.}
 \code{scales::log10_trans()} or \code{scales::reciprocal_trans()}. If not provided,
 the default is used which matches the units used in \code{range}. If no
 transformation, \code{NULL}.}
+
+\item{id}{An optional single character string. This should be either the
+name of a \code{model_spec} class from \code{parsnip} (such as \code{rand_forest}) or
+the unique \code{id} of a step from \code{recipes}. It is only useful to set this
+manually in the rare circumstance of conflicting parameters (such as two
+\code{num_comp} parameters).}
 
 \item{values}{A vector of possible parameter values. For qualitative
 parameters, character and logical defaults have been set, but can be modified
