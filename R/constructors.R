@@ -69,51 +69,79 @@ NULL
 #' @export
 #' @rdname new-param
 #' @importFrom scales is.trans
-new_quant_param <- function(
-  type = c("double", "integer"), range, inclusive,
-  default = unknown(),
-  trans = NULL, values = NULL, label = NULL, finalize = NULL) {
-  type <- match.arg(type)
+#' @importFrom rlang abort
+new_quant_param <- function(type = c("double", "integer"),
+                            range,
+                            inclusive,
+                            default = unknown(),
+                            trans = NULL,
+                            values = NULL,
+                            label = NULL,
+                            finalize = NULL) {
 
+  type <- match.arg(type)
   range <- as.list(range)
 
-  if (length(inclusive) != 2)
-    stop("`inclusive` must have upper and lower values.", all. = FALSE)
-  if (any(is.na(inclusive)))
-    stop("Boundary descriptors must be non-missing.", call. = FALSE)
-  if (!is.logical(inclusive))
-    stop("`inclusive` should be logical", call. = FALSE)
+  if (length(inclusive) != 2) {
+    abort("`inclusive` must have upper and lower values.")
+  }
+
+  if (any(is.na(inclusive))) {
+    abort("Boundary descriptors must be non-missing.")
+  }
+
+  if (!is.logical(inclusive)) {
+    abort("`inclusive` should be logical")
+  }
 
   if (!is.null(trans)) {
     if (!is.trans(trans))
-      stop(
-        "`trans` must be a 'trans' class object (or NULL). See ",
-        "`?scales::trans_new`.", call. = FALSE
-      )
+      abort(paste0(
+        "`trans` must be a 'trans' class object (or NULL). ",
+        "See `?scales::trans_new`."
+      ))
   }
 
   check_label(label)
   check_finalize(finalize)
 
-  names(range) <- names(inclusive) <- c("lower", "upper")
-  res <- list(type = type, range = range, inclusive = inclusive,
-              trans = trans, default = default,
-              label = label, finalize = finalize)
+  names(range) <- c("lower", "upper")
+  names(inclusive) <- c("lower", "upper")
+
+  res <- list(
+    type = type,
+    range = range,
+    inclusive = inclusive,
+    trans = trans,
+    default = default,
+    label = label,
+    finalize = finalize
+  )
+
   class(res) <- c("quant_param", "param")
+
   range_validate(res, range)
 
   if (!is.null(values)) {
+
     ok_vals <- value_validate(res, values)
-    if(all(ok_vals))
+
+    if(all(ok_vals)) {
       res$values <- values
-    else
-      stop("Some values are not valid: ",
-           glue_collapse(
-             values[!ok_vals],
-             sep = ", ",
-             last = " and ",
-             width = min(options()$width - 30, 10)
-           ))
+    }
+    else {
+
+      bad_vals <- glue_collapse(
+        values[!ok_vals],
+        sep = ", ",
+        last = " and ",
+        width = min(options()$width - 30, 10)
+      )
+
+      abort(glue("Some values are not valid: {bad_vals}"))
+
+    }
+
   }
 
   res
@@ -121,28 +149,39 @@ new_quant_param <- function(
 
 #' @export
 #' @rdname new-param
-new_qual_param <- function(type = c("character", "logical"), values,
-                           default = unknown(), label = NULL,
+new_qual_param <- function(type = c("character", "logical"),
+                           values,
+                           default = unknown(),
+                           label = NULL,
                            finalize = NULL) {
+
   type <- match.arg(type)
 
   if (type == "logical") {
     if (!is.logical(values))
-      stop("`values` must be logical", call. = FALSE)
+      abort("`values` must be logical")
   }
+
   if (type == "character") {
     if (!is.character(values))
-      stop("`values` must be character", call. = FALSE)
+      abort("`values` must be character")
   }
-  if (is_unknown(default))
+
+  if (is_unknown(default)) {
     default <- values[1]
+  }
 
   check_label(label)
   check_finalize(finalize)
 
-  res <- list(type = type, default = default,
-              label = label, values = values,
-              finalize = finalize)
+  res <- list(
+    type = type,
+    default = default,
+    label = label,
+    values = values,
+    finalize = finalize
+  )
+
   class(res) <- c("qual_param", "param")
 
   res
@@ -155,34 +194,48 @@ new_qual_param <- function(type = c("character", "logical"), values,
 #' @importFrom purrr map_chr
 #' @importFrom glue glue
 print.quant_param <- function(x, digits = 3, ...) {
+
   if (!is.null(x$label)) {
     cat(x$label, " (quantitative)\n")
-  } else
+  }
+  else {
     cat("Quantitative Parameter\n")
+  }
+
   if (!is.null(x$trans)) {
     print(eval(x$trans))
     cat("Range (transformed scale): ")
-  } else
+  }
+  else {
     cat("Range: ")
+  }
 
   vals <- map_chr(x$range, format_range_val)
   bnds <- format_bounds(x$inclusive)
   cat(glue('{bnds[1]}{vals[1]}, {vals[2]}{bnds[2]}\n'))
+
   invisible(x)
 }
 
 #' @export
 #' @importFrom glue glue_collapse
 print.qual_param <- function(x, ...) {
+
   if (!is.null(x$label)) {
     cat(x$label, " (qualitative)\n")
-  } else
+  }
+  else {
     cat("Qualitative Parameter\n")
+  }
+
   cat(length(x$values), "possible value include:\n")
+
   if (x$type == "character")
     lvls <- paste0("'", x$values, "'")
-  else
+  else {
     lvls <- x$values
+  }
+
   cat(
     glue_collapse(
       lvls,
@@ -190,7 +243,9 @@ print.qual_param <- function(x, ...) {
       last = " and ",
       width = options()$width
     ),
-    "\n")
+    "\n"
+  )
+
   invisible(x)
 }
 
