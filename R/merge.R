@@ -22,65 +22,237 @@
 #' A list containing updated model objects.
 #'
 #' @importFrom utils getS3method
+#' @export merge.model_spec
+#' @method merge model_spec
 #' @export
 merge.model_spec <- function(x, y, ...) {
+  UseMethod("merge.model_spec", y)
+}
 
-  # x is known to be a model_spec
-  is_param_grid <- inherits(y, "param_grid")
 
-  if(!is_param_grid) {
-    stop("`x` and `y` should contain one 'param_grid' object and one ",
-         "'model_spec' object.", call. = FALSE)
-  }
+#' @method merge.model_spec default
+#' @export
+merge.model_spec.default <- function(x, y, ...) {
+  abort("`x` is a 'model_spec', but `y` is not a known mergable type.")
+}
 
-  actual_model_spec <- class(x)[1]
+#' @rdname merge.model_spec
+#' @method merge.model_spec tbl_gridr
+#' @export
+merge.model_spec.tbl_gridr <- function(x, y, ...) {
 
-  upd_mth <- try(getS3method("update", actual_model_spec), silent = TRUE)
+  update_method <- get_update_function(class(x)[1])
 
-  if (inherits(upd_mth, "try-error")) {
-    stop(
-      "No `update` method for class '", actual_model_spec, "'.",
-      call. = FALSE
-    )
-  }
+  vry <- varying_args(x, full = FALSE)
 
-  mod_param <- names(x$args)
-  param_names <- names(y)
-  common <- intersect(mod_param, param_names)
+  y <- fill_missing_ids(y, vry)
 
-  if (length(common) == 0) {
-    return(x)
-  }
+  validate_varying_are_in_grid(y, vry)
 
-  # always return a list for type stability, even if nrow = 1
-  nrow_y <- nrow(y)
-  nrow_seq <- seq_len(nrow_y)
-  spec_list <- rlang::new_list(nrow_y)
+  vry_grd <- left_join_vry_and_grd(vry = vry, grd = y)
+
+  # for a spec, shouldnt be any need to worry about identical IDs
+  grid <- gridify(vry_grd)
+
+  nrow_seq <- seq_len(nrow(grid))
 
   param_obj <- list(object = x)
 
-  spec_list <- purrr::map(nrow_seq, ~{
+  grid$specs <- purrr::map(nrow_seq, ~{
 
-    param_lst <- as.list(y[.x, common, drop = FALSE])
+    param_lst <- as.list(grid[.x, , drop = FALSE])
     param_lst <- c(param_lst, param_obj)
-    do.call(upd_mth, param_lst)
+    do.call(update_method, param_lst)
 
   })
 
-  spec_list
+  grid
 }
 
-#' @export
 #' @rdname merge.model_spec
-merge.param_grid <- function(x, y, ...) {
+#' @export merge.recipe
+#' @method merge recipe
+#' @export
+merge.recipe <- function(x, y, ...) {
+  UseMethod("merge.recipe", y)
+}
 
-  # x is known to be a param_grid
-  is_model_spec <- inherits(y, "model_spec")
+#' @method merge.recipe default
+#' @export
+merge.recipe.default <- function(x, y, ...) {
+  abort("`x` is a 'recipe', but `y` is not a known mergable type.")
+}
 
-  if(!is_model_spec) {
-    stop("`x` and `y` should contain one 'param_grid' object and one ",
-         "'model_spec' object.", call. = FALSE)
+#' @rdname merge.model_spec
+#' @method merge.recipe tbl_gridr
+#' @export
+merge.recipe.tbl_gridr <- function(x, y, ...) {
+
+  vry <- varying_args(x, full = FALSE)
+
+  y <- fill_missing_ids(y, vry)
+
+  validate_varying_are_in_grid(y, vry)
+
+  vry_grd <- left_join_vry_and_grd(vry = vry, grd = y)
+
+  # for a recipe, we do need to worry about identical params
+  grid <- gridify(vry_grd)
+
+  grid_t <- purrr::transpose(grid)
+
+  vry <- simple_unite(vry, remove = FALSE)
+
+  grid$recipes <- purrr::map(grid_t, update_recipe, rec = x, vry_tbl = vry)
+
+  grid
+}
+
+#' @rdname merge.model_spec
+#' @export merge.tbl_gridr
+#' @method merge tbl_gridr
+#' @export
+merge.tbl_gridr <- function(x, y, ...) {
+  UseMethod("merge.tbl_gridr", y)
+}
+
+#' @method merge.tbl_gridr default
+#' @export
+merge.tbl_gridr.default <- function(x, y, ...) {
+  abort("`x` is a 'tbl_gridr', but `y` is not a known mergable type.")
+}
+
+#' @rdname merge.model_spec
+#' @method merge.tbl_gridr recipe
+#' @export
+merge.tbl_gridr.recipe <- function(x, y, ...) {
+  merge(y, x, ...)
+}
+
+#' @rdname merge.model_spec
+#' @method merge.tbl_gridr model_spec
+#' @export
+merge.tbl_gridr.model_spec <- function(x, y, ...) {
+  merge(y, x, ...)
+}
+
+# ------------------------------------------------------------------------------
+
+fill_missing_ids <- function(grd, vry) {
+
+  update_id <- function(name, id) {
+
+    # user supplied ID
+    if (!is.na(id)) {
+      return(id)
+    }
+
+    # can't update anything (not a varying param)
+    if (!(name %in% vry$name)) {
+      return(NA)
+    }
+
+    pos <- which(vry$name == name)[1]
+    vry$id[pos]
+
   }
 
-  merge.model_spec(y, x, ...)
+  # fill in any missing IDs with the varying tbl info
+  grd$id <- purrr::map2_chr(grd$name, grd$id, update_id)
+
+  grd
 }
+
+validate_varying_are_in_grid <- function(grd, vry) {
+  vry_nms <- paste(vry$name, vry$id, sep = "..")
+  grd_nms <- paste(grd$name, grd$id, sep = "..")
+
+  validate_unique_name_id_pairs(grd_nms)
+
+  vry_exist <- vry_nms %in% grd_nms
+
+  if (!all(vry_exist)) {
+    dont_exist <- glue::glue_collapse(glue::single_quote(vry_nms[!vry_exist]), ", ")
+    abort(glue(
+      "All varying 'name..id' combinations must be specified in the 'tbl_gridr'. ",
+      "The following don't exist: {dont_exist}."
+    ))
+  }
+}
+
+validate_unique_name_id_pairs <- function(x) {
+
+  dups <- duplicated(x)
+
+  if (any(dups)) {
+    dup <- glue::glue_collapse(x[dups], ", ")
+
+    abort(glue(
+      "There is at least one duplicated 'name..id' pair present ({dup}). ",
+      "Do you need to specify an `id` to preserve uniqueness?"
+    ))
+  }
+}
+
+left_join_vry_and_grd <- function(vry, grd) {
+
+  merged <- merge.data.frame(
+    x = vry,
+    y = grd,
+    by = c("name", "id"),
+    all.x = TRUE
+  )
+
+  # it is a tbl_gridr (it has name, id, values columns)
+  vry_with_vals <- as_tibble(merged)
+  class(vry_with_vals) <- c("tbl_gridr", class(vry_with_vals))
+
+  vry_with_vals
+}
+
+get_update_function <- function(cls) {
+
+  update_fn <- try(getS3method("update", cls), silent = TRUE)
+
+  if (inherits(update_fn, "try-error")) {
+    abort(glue("No `update` method for class '{cls}'."))
+  }
+
+  update_fn
+}
+
+# For each step, fill in hyperparameters where needed
+update_recipe <- function(grd_single, rec, vry_tbl) {
+
+  update_fn <- get_update_function("step")
+
+  rec$steps <- map(
+    .x = rec$steps,
+    .f = update_step,
+    grd_single = grd_single,
+    vry_tbl = vry_tbl,
+    update_fn = update_fn
+  )
+
+  rec
+}
+
+update_step <- function(stp, grd_single, vry_tbl, update_fn) {
+
+  # Find the varying args specific to this recipe step
+  vry_step <- vry_tbl[vry_tbl$id == stp$id, , drop = FALSE]
+
+  # Find the matching grid columns
+  grd_rec_specific <- grd_single[vry_step$name_id]
+
+  # Undo the `..` uniqueness
+  dot_dot_anything <- "\\.\\..*"
+  names(grd_rec_specific) <- gsub(dot_dot_anything, "", names(grd_rec_specific))
+
+  # Update the step
+  #update(stp, !!! grd_rec_specific)
+  do.call(update_fn, rlang::list2(object = stp, !!! grd_rec_specific))
+
+}
+
+

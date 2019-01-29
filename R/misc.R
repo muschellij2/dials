@@ -57,3 +57,9 @@ check_id <- function(x) {
     abort("`id` should be NULL or a character.")
   }
 }
+
+# is functions -----------------------------------------------------------------
+
+is_dials_param <- function(x) {
+  inherits(x, "param")
+}

@@ -2,12 +2,27 @@
 % Please edit documentation in R/merge.R
 \name{merge.model_spec}
 \alias{merge.model_spec}
-\alias{merge.param_grid}
+\alias{merge.model_spec.tbl_gridr}
+\alias{merge.recipe}
+\alias{merge.recipe.tbl_gridr}
+\alias{merge.tbl_gridr}
+\alias{merge.tbl_gridr.recipe}
+\alias{merge.tbl_gridr.model_spec}
 \title{Merge parameter grid values into a parsnip object}
 \usage{
 \method{merge}{model_spec}(x, y, ...)
 
-\method{merge}{param_grid}(x, y, ...)
+\method{merge.model_spec}{tbl_gridr}(x, y, ...)
+
+\method{merge}{recipe}(x, y, ...)
+
+\method{merge.recipe}{tbl_gridr}(x, y, ...)
+
+\method{merge}{tbl_gridr}(x, y, ...)
+
+\method{merge.tbl_gridr}{recipe}(x, y, ...)
+
+\method{merge.tbl_gridr}{model_spec}(x, y, ...)
 }
 \arguments{
 \item{x, y}{A combination of one \pkg{parsnip} model object (that has class
