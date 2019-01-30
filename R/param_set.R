@@ -1,22 +1,22 @@
 # ------------------------------------------------------------------------------
-# param_box functions
+# param_set functions
 
 #' @export
-param_box <- function() {
-  new_param_box()
+param_set <- function() {
+  new_param_set()
 }
 
 #' @export
-pack_param <- function(param_box, param, id = NA) {
+attach_param <- function(param_set, param, id = NA) {
 
-  validate_param_box(param_box)
-  pb_param <- new_param_box_param(param = param, id = id)
-  pack_one_param(param_box, pb_param)
+  validate_param_set(param_set)
+  pb_param <- new_param_set_param(param = param, id = id)
+  attach_one_param(param_set, pb_param)
 
 }
 
 #' @export
-pack_values_param <- function(param_box, name, values, id = NA) {
+attach_values_param <- function(param_set, name, values, id = NA) {
 
   param <- new_qual_param(
     name = name,
@@ -25,12 +25,12 @@ pack_values_param <- function(param_box, name, values, id = NA) {
     label = name
   )
 
-  pack_param(param_box, param, id = id)
+  attach_param(param_set, param, id = id)
 
 }
 
 #' @export
-pack_range_param <- function(param_box, name, min, max, id = NA) {
+attach_range_param <- function(param_set, name, min, max, id = NA) {
 
   validate_numeric(min, "min")
   validate_numeric(max, "max")
@@ -56,25 +56,25 @@ pack_range_param <- function(param_box, name, min, max, id = NA) {
     label = name
   )
 
-  pack_param(param_box, param, id = id)
+  attach_param(param_set, param, id = id)
 }
 
-pack_one_param <- function(x, param) {
-  UseMethod("pack_one_param")
+attach_one_param <- function(x, param) {
+  UseMethod("attach_one_param")
 }
 
-pack_one_param.param_box <- function(x, param) {
+attach_one_param.param_set <- function(x, param) {
   params <- c(x$params, list(param))
-  new_param_box(params = params)
+  new_param_set(params = params)
 }
 
-pack_one_param.grid_box <- function(x, param) {
-  packed_param_box <- NextMethod()
-  new_grid_box(grid_tbl = x$grid_tbl, params = packed_param_box$params)
+attach_one_param.grid_set <- function(x, param) {
+  refined_param_set <- NextMethod()
+  new_grid_set(grid_tbl = x$grid_tbl, params = refined_param_set$params)
 }
 
 # ------------------------------------------------------------------------------
-# grid_box functions
+# grid_set functions
 
 #' @export
 grid_generate <- function(x, default = "regular", n = 10) {
@@ -82,13 +82,13 @@ grid_generate <- function(x, default = "regular", n = 10) {
 }
 
 #' @export
-grid_generate.param_box <- function(x, default = "regular", n = 10) {
-  gb <- new_grid_box(params = x$params)
+grid_generate.param_set <- function(x, default = "regular", n = 10) {
+  gb <- new_grid_set(params = x$params)
   grid_generate(gb, default = default, n = n)
 }
 
 #' @export
-grid_generate.grid_box <- function(x, default = "regular", n = 10) {
+grid_generate.grid_set <- function(x, default = "regular", n = 10) {
 
   validate_all_finalized(x$params)
 
@@ -114,13 +114,13 @@ grid_assign_regular <- function(x, ...) {
 }
 
 #' @export
-grid_assign_regular.param_box <- function(x, ...) {
-  gb <- new_grid_box(params = x$params)
+grid_assign_regular.param_set <- function(x, ...) {
+  gb <- new_grid_set(params = x$params)
   grid_assign_regular(gb, ...)
 }
 
 #' @export
-grid_assign_regular.grid_box <- function(x, ...) {
+grid_assign_regular.grid_set <- function(x, ...) {
   add_grid_tbl_rows(type = "regular", x, ...)
 }
 
@@ -130,13 +130,13 @@ grid_assign_random <- function(x, ...) {
 }
 
 #' @export
-grid_assign_random.param_box <- function(x, ...) {
-  gb <- new_grid_box(params = x$params)
+grid_assign_random.param_set <- function(x, ...) {
+  gb <- new_grid_set(params = x$params)
   grid_assign_random(gb, ...)
 }
 
 #' @export
-grid_assign_random.grid_box <- function(x, ...) {
+grid_assign_random.grid_set <- function(x, ...) {
   add_grid_tbl_rows(type = "random", x, ...)
 }
 
@@ -184,7 +184,7 @@ add_grid_tbl_rows <- function(type, x, ...) {
 
   grid_tbl <- tibble::add_row(x$grid_tbl, name = names, type = type, n = n)
 
-  new_grid_box(grid_tbl = grid_tbl, params = x$params)
+  new_grid_set(grid_tbl = grid_tbl, params = x$params)
 
 }
 
@@ -236,52 +236,52 @@ simple_unite <- function(x, remove = TRUE) {
 # finalize
 
 #' @export
-finalize.param_box <- function(object, x, ...) {
+finalize.param_set <- function(object, x, ...) {
   params <- purrr::map(object$params, finalize, x = x)
-  new_param_box(params = params)
+  new_param_set(params = params)
 }
 
 #' @export
-finalize.param_box_param <- function(object, x, ...) {
+finalize.param_set_param <- function(object, x, ...) {
   object$param <- finalize(object$param, x)
   object
 }
 
 #' @export
-finalize.grid_box <- function(object, x, ...) {
-  finalized_param_box <- NextMethod()
-  new_grid_box(grid_tbl = object$grid_tbl, params = finalized_param_box$params)
+finalize.grid_set <- function(object, x, ...) {
+  finalized_param_set <- NextMethod()
+  new_grid_set(grid_tbl = object$grid_tbl, params = finalized_param_set$params)
 }
 
 # ------------------------------------------------------------------------------
 # constructors
 
-new_param_box <- function(params = list(), ..., subclass = character()) {
+new_param_set <- function(params = list(), ..., subclass = character()) {
 
-  validate_all_param_box_params(params)
+  validate_all_param_set_params(params)
   validate_no_duplicate_params(params)
 
   elems <- rlang::list2(...)
   elems <- c(list(params = params), elems)
 
-  structure(elems, class = c(subclass, "param_box"))
+  structure(elems, class = c(subclass, "param_set"))
 
 }
 
-new_grid_box <- function(grid_tbl = new_grid_tbl(), params = list(), ..., subclass = character()) {
+new_grid_set <- function(grid_tbl = new_grid_tbl(), params = list(), ..., subclass = character()) {
 
   validate_grid_tbl_structure(grid_tbl)
 
-  new_param_box(
+  new_param_set(
     params = params,
     grid_tbl = grid_tbl,
     ...,
-    subclass = c(subclass, "grid_box")
+    subclass = c(subclass, "grid_set")
   )
 
 }
 
-new_param_box_param <- function(param, id = NA, ..., subclass = character()) {
+new_param_set_param <- function(param, id = NA, ..., subclass = character()) {
 
   if (!is_dials_param(param)) {
     abort("`param` must be a dials `param` object.")
@@ -302,7 +302,7 @@ new_param_box_param <- function(param, id = NA, ..., subclass = character()) {
 
   elems <- c(list(param = param, name = name, id = id), elems)
 
-  structure(elems, class = c(subclass, "param_box_param"))
+  structure(elems, class = c(subclass, "param_set_param"))
 }
 
 # ------------------------------------------------------------------------------
@@ -315,16 +315,16 @@ new_grid_tbl <- function(name = character(), type = character(), n = integer()) 
 # ------------------------------------------------------------------------------
 # is_*()
 
-is_param_box <- function(x) {
-  inherits(x, "param_box")
+is_param_set <- function(x) {
+  inherits(x, "param_set")
 }
 
-is_param_box_param <- function(x) {
-  inherits(x, "param_box_param")
+is_param_set_param <- function(x) {
+  inherits(x, "param_set_param")
 }
 
-is_grid_box_param <- function(x) {
-  inherits(x, "grid_box_param")
+is_grid_set_param <- function(x) {
+  inherits(x, "grid_set_param")
 }
 
 is_finalized <- function(x) {
@@ -334,39 +334,39 @@ is_finalized <- function(x) {
 # ------------------------------------------------------------------------------
 # validation
 
-validate_param_box <- function(x) {
-  if (!is_param_box(x)) {
-    abort("`param_box` must be a `param_box` object.")
+validate_param_set <- function(x) {
+  if (!is_param_set(x)) {
+    abort("`param_set` must be a `param_set` object.")
   }
 
   invisible(x)
 }
 
-validate_no_duplicate_params <- function(param_box_params) {
-  nms <- purrr::map_chr(param_box_params, function(x) x$name)
+validate_no_duplicate_params <- function(param_set_params) {
+  nms <- purrr::map_chr(param_set_params, function(x) x$name)
   if (anyDuplicated(nms)) {
     abort(glue(
-      "Duplicate params cannot be added to a `param_box`. ",
+      "Duplicate params cannot be added to a `param_set`. ",
       "Use `id` to differentiate them."
     ))
   }
 }
 
-validate_all_param_box_params <- function(x) {
-  all_param_box_params <- all(purrr::map_lgl(x, is_param_box_param))
+validate_all_param_set_params <- function(x) {
+  all_param_set_params <- all(purrr::map_lgl(x, is_param_set_param))
 
-  if (!all_param_box_params) {
-    abort("All elements in `...` must be `param_box_param` objects.")
+  if (!all_param_set_params) {
+    abort("All elements in `...` must be `param_set_param` objects.")
   }
 
   invisible(x)
 }
 
-validate_all_grid_box_params <- function(x) {
-  all_grid_box_params <- all(purrr::map_lgl(x, is_grid_box_param))
+validate_all_grid_set_params <- function(x) {
+  all_grid_set_params <- all(purrr::map_lgl(x, is_grid_set_param))
 
-  if (!all_grid_box_params) {
-    abort("All elements in `...` must be `grid_box_param` objects.")
+  if (!all_grid_set_params) {
+    abort("All elements in `...` must be `grid_set_param` objects.")
   }
 
   invisible(x)
@@ -465,15 +465,15 @@ validate_valid_names <- function(x, nms) {
   invisible(x)
 }
 
-validate_all_finalized <- function(param_box_params) {
+validate_all_finalized <- function(param_set_params) {
 
   finalized_lgl <- purrr::map_lgl(
-    .x = param_box_params,
+    .x = param_set_params,
     .f = function(.x) is_finalized(.x$param)
   )
 
   if (!all(finalized_lgl)) {
-    not_finalized <- map_chr(param_box_params[!finalized_lgl], function(.x) .x$name)
+    not_finalized <- map_chr(param_set_params[!finalized_lgl], function(.x) .x$name)
     not_finalized <- glue::glue_collapse(glue::single_quote(not_finalized), ", ")
 
     abort(glue(
@@ -483,7 +483,7 @@ validate_all_finalized <- function(param_box_params) {
     ))
   }
 
-  invisible(param_box_params)
+  invisible(param_set_params)
 }
 
 validate_name <- check_name
