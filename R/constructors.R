@@ -6,7 +6,7 @@
 #'
 #' @param type A single character value. For quantitative parameters, valid
 #' choices are `"double"` and `"integer"` while for qualitative factors they are
-#' `"character"` and `"logical"`.
+#' `"character"`, `"logical"` and `"list"`.
 #'
 #' @param range A two-element vector with the smallest or largest possible
 #'  values, respectively. If these cannot be set when the parameter is defined,
@@ -23,8 +23,8 @@
 #' [scales::log10_trans()] or [scales::reciprocal_trans()]. Create custom
 #' transforms with [scales::trans_new()].
 #'
-#' @param values A vector of possible values that is required when `type` is
-#' `"character"` or `"logical"` but optional otherwise. For quantitative
+#' @param values A vector of possible values that is required when using a
+#' qualitative parameter, but optional otherwise. For quantitative
 #' parameters, these override the `range` when generating sequences if set.
 #'
 #' @param label An optional character string that can be used for
@@ -166,7 +166,7 @@ new_quant_param <- function(name,
 #' @export
 #' @rdname new-param
 new_qual_param <- function(name,
-                           type = c("character", "logical"),
+                           type = c("character", "logical", "list"),
                            values,
                            default = unknown(),
                            label = NULL,
@@ -176,13 +176,21 @@ new_qual_param <- function(name,
   type <- match.arg(type)
 
   if (type == "logical") {
-    if (!is.logical(values))
-      abort("`values` must be logical")
+    if (!is.logical(values)) {
+      abort("`values` must be logical.")
+    }
   }
 
   if (type == "character") {
-    if (!is.character(values))
-      abort("`values` must be character")
+    if (!is.character(values)) {
+      abort("`values` must be character.")
+    }
+  }
+
+  if (type == "list") {
+    if (!is.list(values)) {
+      abort("`values` must be a list.")
+    }
   }
 
   if (is_unknown(default)) {

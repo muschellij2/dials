@@ -4,12 +4,19 @@ library(dials)
 context("qualitative parameter object creation")
 
 test_that('bad args', {
+
   expect_error(
     new_qual_param(name = "test", type = "character", values = 1:2)
   )
+
   expect_error(
     new_qual_param(name = "test", type = "logical", values = letters[1:2])
   )
+
+  expect_error(
+    new_qual_param(name = "test", type = "list", values = 1)
+  )
+
 })
 
 

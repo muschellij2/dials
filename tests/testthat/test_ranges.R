@@ -1,7 +1,7 @@
 library(testthat)
 library(dials)
 
-context("qualitative parameter ranges")
+context("quantitative parameter ranges")
 
 test_that('no transforms', {
   expect_equal(

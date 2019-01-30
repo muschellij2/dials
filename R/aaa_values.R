@@ -75,18 +75,21 @@
 #'
 #' @export
 value_validate <- function(object, values) {
+
   res <- switch(
     object$type,
     double    = ,
     integer   = value_validate_quant(object, values),
     character = ,
-    logical   = value_validate_qual(object, values)
+    logical   = ,
+    list      = value_validate_qual(object, values)
   )
-  unlist(res)
 
+  res
 }
 
 value_validate_quant <- function(object, values) {
+
   check_for_unknowns(object$range, "value_validate")
   check_for_unknowns(values, "value_validate")
 
@@ -133,9 +136,11 @@ value_seq <- function(object, n, original = TRUE) {
     double    = value_seq_dbl(object, n, original),
     integer   = value_seq_int(object, n, original),
     character = ,
-    logical   = value_seq_qual(object, n)
+    logical   = ,
+    list      = value_seq_qual(object, n)
   )
-  unlist(res)
+
+  res
 }
 
 value_seq_dbl <- function(object, n, original = TRUE) {
@@ -199,9 +204,11 @@ value_sample <- function(object, n, original = TRUE) {
     double    = value_samp_dbl(object, n, original),
     integer   = value_samp_int(object, n, original),
     character = ,
-    logical   = value_samp_qual(object, n)
+    logical   = ,
+    list      = value_samp_qual(object, n)
   )
-  unlist(res)
+
+  res
 }
 
 value_samp_dbl <- function(object, n, original = TRUE) {
@@ -267,6 +274,7 @@ value_samp_qual <- function(object, n) {
     size = n,
     replace = TRUE
   )
+  res
 }
 
 #' @export

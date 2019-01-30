@@ -1,7 +1,7 @@
 library(testthat)
 library(dials)
 
-context("qualitative parameter values")
+context("quantitative parameter values")
 
 test_that('transforms with unknowns', {
   expect_error(
@@ -232,21 +232,35 @@ test_that('sampling - integers', {
 
 context("qualitative parameter values")
 
-test_param_5 <-
-  new_qual_param(
-    name = "test_param_5",
-    type = "character",
-    values = letters[1:10],
-    default = "c",
-    label = "param"
-  )
-test_param_6 <-
-  new_qual_param(
-    name = "test_param_6",
-    type = "logical",
-    values = TRUE,
-    label = "param"
-  )
+test_param_5 <- new_qual_param(
+  name = "test_param_5",
+  type = "character",
+  values = letters[1:10],
+  default = "c",
+  label = "param"
+)
+
+test_param_6 <- new_qual_param(
+  name = "test_param_6",
+  type = "logical",
+  values = TRUE,
+  label = "param"
+)
+
+test_param_7 <- new_qual_param(
+  name = "test_param_7",
+  type = "list",
+  values = list(1, 2, 3, 4, 5),
+  label = "param"
+)
+
+test_param_8 <- new_qual_param(
+  name = "test_param_8",
+  type = "list",
+  values = list(list(x = 1, y = 2), list(x = 2, y = 2), list(x = 2, y = 3)),
+  label = "param"
+)
+
 
 test_that('sequences - character', {
   expect_equal(
@@ -278,6 +292,21 @@ test_that('sequences - logical', {
   )
 })
 
+test_that('sequences - list', {
+  expect_equal(
+    value_seq(test_param_7, Inf), list(1, 2, 3, 4, 5)
+  )
+  expect_equal(
+    value_seq(test_param_8, Inf), list(list(x = 1, y = 2), list(x = 2, y = 2), list(x = 2, y = 3))
+  )
+
+  expect_equal(
+    value_seq(test_param_7, 2), list(1, 2)
+  )
+  expect_equal(
+    value_seq(test_param_8, 2), list(list(x = 1, y = 2), list(x = 2, y = 2))
+  )
+})
 
 test_that('sampling - character and logical', {
   set.seed(9950)
@@ -290,6 +319,16 @@ test_that('sampling - character and logical', {
   )
 })
 
+test_that('sampling - list', {
+  set.seed(9950)
+  expect_equal(
+    value_sample(test_param_7, 2), list(5, 1)
+  )
+  set.seed(9950)
+  expect_equal(
+    value_sample(test_param_8, 2), list(list(x = 2, y = 3), list(x = 1, y = 2))
+  )
+})
 
 
 

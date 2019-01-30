@@ -79,7 +79,7 @@ check_for_unknowns <- function(x, label = "") {
   err_txt <- paste0("Unknowns not allowed in `", label, "`.")
   if (length(x) == 1 && is_unknown(x))
     stop(err_txt, call. = FALSE)
-  is_ukn <- map_lgl(x, is_unknown)
+  is_ukn <- is_unknown(x)
   if (any(is_ukn))
     stop(err_txt, call. = FALSE)
   invisible(TRUE)
