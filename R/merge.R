@@ -37,9 +37,9 @@ merge.model_spec.default <- function(x, y, ...) {
 }
 
 #' @rdname merge.model_spec
-#' @method merge.model_spec tbl_gridr
+#' @method merge.model_spec tbl_grid
 #' @export
-merge.model_spec.tbl_gridr <- function(x, y, ...) {
+merge.model_spec.tbl_grid <- function(x, y, ...) {
 
   update_method <- get_update_function(class(x)[1])
 
@@ -84,9 +84,9 @@ merge.recipe.default <- function(x, y, ...) {
 }
 
 #' @rdname merge.model_spec
-#' @method merge.recipe tbl_gridr
+#' @method merge.recipe tbl_grid
 #' @export
-merge.recipe.tbl_gridr <- function(x, y, ...) {
+merge.recipe.tbl_grid <- function(x, y, ...) {
 
   vry <- varying_args(x, full = FALSE)
 
@@ -109,30 +109,30 @@ merge.recipe.tbl_gridr <- function(x, y, ...) {
 }
 
 #' @rdname merge.model_spec
-#' @export merge.tbl_gridr
-#' @method merge tbl_gridr
+#' @export merge.tbl_grid
+#' @method merge tbl_grid
 #' @export
-merge.tbl_gridr <- function(x, y, ...) {
-  UseMethod("merge.tbl_gridr", y)
+merge.tbl_grid <- function(x, y, ...) {
+  UseMethod("merge.tbl_grid", y)
 }
 
-#' @method merge.tbl_gridr default
+#' @method merge.tbl_grid default
 #' @export
-merge.tbl_gridr.default <- function(x, y, ...) {
-  abort("`x` is a 'tbl_gridr', but `y` is not a known mergable type.")
+merge.tbl_grid.default <- function(x, y, ...) {
+  abort("`x` is a 'tbl_grid', but `y` is not a known mergable type.")
 }
 
 #' @rdname merge.model_spec
-#' @method merge.tbl_gridr recipe
+#' @method merge.tbl_grid recipe
 #' @export
-merge.tbl_gridr.recipe <- function(x, y, ...) {
+merge.tbl_grid.recipe <- function(x, y, ...) {
   merge(y, x, ...)
 }
 
 #' @rdname merge.model_spec
-#' @method merge.tbl_gridr model_spec
+#' @method merge.tbl_grid model_spec
 #' @export
-merge.tbl_gridr.model_spec <- function(x, y, ...) {
+merge.tbl_grid.model_spec <- function(x, y, ...) {
   merge(y, x, ...)
 }
 
@@ -174,7 +174,7 @@ validate_varying_are_in_grid <- function(grd, vry) {
   if (!all(vry_exist)) {
     dont_exist <- glue::glue_collapse(glue::single_quote(vry_nms[!vry_exist]), ", ")
     abort(glue(
-      "All varying 'name..id' combinations must be specified in the 'tbl_gridr'. ",
+      "All varying 'name..id' combinations must be specified in the 'tbl_grid'. ",
       "The following don't exist: {dont_exist}."
     ))
   }
@@ -203,9 +203,9 @@ left_join_vry_and_grd <- function(vry, grd) {
     all.x = TRUE
   )
 
-  # it is a tbl_gridr (it has name, id, values columns)
+  # it is a tbl_grid (it has name, id, values columns)
   vry_with_vals <- as_tibble(merged)
-  class(vry_with_vals) <- c("tbl_gridr", class(vry_with_vals))
+  class(vry_with_vals) <- c("tbl_grid", class(vry_with_vals))
 
   vry_with_vals
 }

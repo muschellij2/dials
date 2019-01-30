@@ -10,7 +10,7 @@ new_quant_param(name, type = c("double", "integer"), range, inclusive,
   default = unknown(), trans = NULL, values = NULL, label = NULL,
   id = NULL, finalize = NULL)
 
-new_qual_param(name, type = c("character", "logical"), values,
+new_qual_param(name, type = c("character", "logical", "list"), values,
   default = unknown(), label = NULL, id = NULL, finalize = NULL)
 }
 \arguments{
@@ -20,7 +20,7 @@ name \code{"mtry"}).}
 
 \item{type}{A single character value. For quantitative parameters, valid
 choices are \code{"double"} and \code{"integer"} while for qualitative factors they are
-\code{"character"} and \code{"logical"}.}
+\code{"character"}, \code{"logical"} and \code{"list"}.}
 
 \item{range}{A two-element vector with the smallest or largest possible
 values, respectively. If these cannot be set when the parameter is defined,
@@ -37,8 +37,8 @@ parameter value. \code{unknown()} can also be used here.}
 \code{\link[scales:log10_trans]{scales::log10_trans()}} or \code{\link[scales:reciprocal_trans]{scales::reciprocal_trans()}}. Create custom
 transforms with \code{\link[scales:trans_new]{scales::trans_new()}}.}
 
-\item{values}{A vector of possible values that is required when \code{type} is
-\code{"character"} or \code{"logical"} but optional otherwise. For quantitative
+\item{values}{A vector of possible values that is required when using a
+qualitative parameter, but optional otherwise. For quantitative
 parameters, these override the \code{range} when generating sequences if set.}
 
 \item{label}{An optional character string that can be used for
