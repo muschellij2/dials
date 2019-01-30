@@ -5,10 +5,10 @@ context("qualitative parameter object creation")
 
 test_that('bad args', {
   expect_error(
-    new_qual_param("character", 1:2)
+    new_qual_param(name = "test", type = "character", values = 1:2)
   )
   expect_error(
-    new_qual_param("logical", letters[1:2])
+    new_qual_param(name = "test", type = "logical", values = letters[1:2])
   )
 })
 
@@ -17,31 +17,31 @@ context("quantitative parameter object creation")
 
 test_that('bad args', {
   expect_error(
-    new_quant_param("double", range = 1, inclusive = c(TRUE, TRUE))
+    new_quant_param("test", "double", range = 1, inclusive = c(TRUE, TRUE))
   )
   expect_error(
-    new_quant_param("double", range = c(1, NA), inclusive = c(TRUE, TRUE))
+    new_quant_param("test", "double", range = c(1, NA), inclusive = c(TRUE, TRUE))
   )
   expect_error(
-    new_quant_param("double", range = c(1, NA), inclusive = TRUE)
+    new_quant_param("test", "double", range = c(1, NA), inclusive = TRUE)
   )
   expect_error(
-    new_quant_param("double", range = c(1, NA), inclusive = c("(", "]"))
+    new_quant_param("test", "double", range = c(1, NA), inclusive = c("(", "]"))
   )
   expect_error(
-    new_quant_param("double", range = c(1, NA), inclusive = c(TRUE, TRUE))
+    new_quant_param("test", "double", range = c(1, NA), inclusive = c(TRUE, TRUE))
   )
   expect_error(
-    new_quant_param("double", range = 1:2, inclusive = c(TRUE, NA))
+    new_quant_param("test", "double", range = 1:2, inclusive = c(TRUE, NA))
   )
   expect_error(
-    new_quant_param("double", range = 1:2, inclusive = c(TRUE, unknown()))
+    new_quant_param("test", "double", range = 1:2, inclusive = c(TRUE, unknown()))
   )
   expect_error(
-    new_quant_param("double", range = 1:2, inclusive = c(TRUE, TRUE), trans = log)
+    new_quant_param("test", "double", range = 1:2, inclusive = c(TRUE, TRUE), trans = log)
   )
   expect_error(
-    new_quant_param("double", range = 1:2, inclusive = c(TRUE, TRUE), values = 1:4)
+    new_quant_param("test", "double", range = 1:2, inclusive = c(TRUE, TRUE), values = 1:4)
   )
 })
 

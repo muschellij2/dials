@@ -317,6 +317,7 @@ value_set <- function(object, values) {
   if (inherits(object, "quant_param")) {
     object <-
       new_quant_param(
+        name = object$name,
         type = object$type,
         range = object$range,
         inclusive = object$inclusive,
@@ -328,6 +329,7 @@ value_set <- function(object, values) {
   } else {
     object <-
       new_qual_param(
+        name = object$name,
         type = object$type,
         default = object$default,
         values = unname(values),

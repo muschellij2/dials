@@ -49,59 +49,65 @@ test_that('inverses', {
 
 test_param_1 <-
   new_quant_param(
+    name = "test_param_1",
     type = "integer",
     range = c(1L, 10L),
     inclusive = c(TRUE, TRUE),
     trans = NULL,
     default = 3,
-    label = c(param = "param")
+    label = "param"
   )
 test_param_2 <-
   new_quant_param(
+    name = "test_param_2",
     type = "integer",
     range = c(2.1, 5.3),
     inclusive = c(TRUE, TRUE),
     trans = sqrt_trans(),
     default = sqrt(2),
-    label = c(param = "param")
+    label = "param"
   )
 test_param_3 <-
   new_quant_param(
+    name = "test_param_3",
     type = "double",
     range = 0:1,
     inclusive = c(TRUE, TRUE),
     trans = NULL,
     default = .40,
-    label = c(param = "param")
+    label = "param"
   )
 test_param_4 <-
   new_quant_param(
+    name = "test_param_4",
     type = "double",
     range = 0:1,
     inclusive = c(TRUE, TRUE),
     trans = sqrt_trans(),
     default = sqrt(.6),
-    label = c(param = "param")
+    label = "param"
   )
 value_seq <-
   new_quant_param(
+    name = "value_seq",
     type = "double",
     range = 0:1,
     inclusive = c(TRUE, TRUE),
     trans = NULL,
     values = (0:5)/5,
     default = .6,
-    label = c(param = "param")
+    label = "param"
   )
 int_seq <-
   new_quant_param(
+    name = "int_seq",
     type = "integer",
     range = c(0, 100),
     inclusive = c(TRUE, TRUE),
     trans = NULL,
     values = 1:10,
     default = 60,
-    label = c(param = "param")
+    label = "param"
   )
 
 test_that('sequences - doubles', {
@@ -228,16 +234,18 @@ context("qualitative parameter values")
 
 test_param_5 <-
   new_qual_param(
+    name = "test_param_5",
     type = "character",
     values = letters[1:10],
     default = "c",
-    label = c(param = "param")
+    label = "param"
   )
 test_param_6 <-
   new_qual_param(
+    name = "test_param_6",
     type = "logical",
     values = TRUE,
-    label = c(param = "param")
+    label = "param"
   )
 
 test_that('sequences - character', {

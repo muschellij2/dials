@@ -6,14 +6,18 @@
 \alias{new_qual_param}
 \title{Tools for creating new parameter objects}
 \usage{
-new_quant_param(type = c("double", "integer"), range, inclusive,
+new_quant_param(name, type = c("double", "integer"), range, inclusive,
   default = unknown(), trans = NULL, values = NULL, label = NULL,
   id = NULL, finalize = NULL)
 
-new_qual_param(type = c("character", "logical"), values,
+new_qual_param(name, type = c("character", "logical"), values,
   default = unknown(), label = NULL, id = NULL, finalize = NULL)
 }
 \arguments{
+\item{name}{A required character string for the name of the parameter. This
+should match the name of the resulting function (i.e. \code{mtry()} has the
+name \code{"mtry"}).}
+
 \item{type}{A single character value. For quantitative parameters, valid
 choices are \code{"double"} and \code{"integer"} while for qualitative factors they are
 \code{"character"} and \code{"logical"}.}
@@ -37,9 +41,8 @@ transforms with \code{\link[scales:trans_new]{scales::trans_new()}}.}
 \code{"character"} or \code{"logical"} but optional otherwise. For quantitative
 parameters, these override the \code{range} when generating sequences if set.}
 
-\item{label}{An optional named character string that can be used for
-printing and plotting. The name should match the object name (e.g.
-\code{"mtry"}, \code{"neighbors"}, etc.)}
+\item{label}{An optional character string that can be used for
+printing and plotting.}
 
 \item{id}{An optional single character string. This should be either the
 name of a \code{model_spec} class from \code{parsnip} (such as \code{rand_forest}) or
@@ -65,11 +68,12 @@ like \code{\link[=mtry]{mtry()}}.
 # corresponding to the number of subgroups.
 num_subgroups <- function(range = c(1L, 20L), trans = NULL) {
   new_quant_param(
+    name = "num_subgroups",
     type = "integer",
     range = range,
     inclusive = c(TRUE, TRUE),
     trans = trans,
-    label = c(num_subgroups = "# Subgroups"),
+    label = "# Subgroups",
     finalize = NULL
   )
 }

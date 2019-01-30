@@ -110,7 +110,7 @@ generate.gridr_param_manual <- function(x, ...) {
 generate.gridr_param_regular <- function(x, ...) {
   validate_finalized(x$param)
   values <- value_seq(x$param, n = x$levels)
-  name <- names(x$param$label)
+  name <- x$param$name
   gridr_row(name = name, id = x$id, values = values)
 }
 
@@ -118,7 +118,7 @@ generate.gridr_param_regular <- function(x, ...) {
 generate.gridr_param_random <- function(x, ...) {
   validate_finalized(x$param)
   values <- value_sample(x$param, n = x$size)
-  name <- names(x$param$label)
+  name <- x$param$name
   gridr_row(name = name, id = x$id, values = values)
 }
 

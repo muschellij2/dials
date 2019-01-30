@@ -34,15 +34,26 @@ check_installs <- function (x) {
 # checking functions -----------------------------------------------------------
 
 check_label <- function(txt) {
-  if (is.null(txt))
-    stop("`label` should be a single named character string or NULL.",
-         call. = FALSE)
-  if (!is.character(txt) || length(txt) > 1)
-    stop("`label` should be a single named character string or NULL.",
-         call. = FALSE)
-  if(length(names(txt)) != 1)
-    stop("`label` should be a single named character string or NULL.",
-         call. = FALSE)
+
+  msg <- "`label` should be a single character string or NULL."
+
+  if (! (is.null(txt) | is.character(txt)) ) {
+    abort(msg)
+  }
+
+  if (is.character(txt) & length(txt) > 1) {
+    abort(msg)
+  }
+
+  invisible(txt)
+}
+
+check_name <- function(txt) {
+
+  if (!rlang::is_scalar_character(txt) ) {
+    abort("`name` should be a single character string.")
+  }
+
   invisible(txt)
 }
 

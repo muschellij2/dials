@@ -44,7 +44,7 @@ grid_regular <- function(..., levels = 3, original = TRUE) {
 
   check_params(params)
 
-  param_names <- map_chr(params, function(x) names(x$label))
+  param_names <- map_chr(params, function(x) x$name)
 
   param_labs <- map_chr(params, function(x) x$label)
   names(param_labs) <- param_names
@@ -82,7 +82,7 @@ grid_random <- function(..., size = 5, original = TRUE) {
 
   check_params(params)
 
-  param_names <- map_chr(params, function(x) names(x$label))
+  param_names <- map_chr(params, function(x) x$name)
 
   param_labs <- map_chr(params, function(x) x$label)
 

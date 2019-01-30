@@ -27,9 +27,12 @@
 #' `"character"` or `"logical"` but optional otherwise. For quantitative
 #' parameters, these override the `range` when generating sequences if set.
 #'
-#' @param label An optional named character string that can be used for
-#' printing and plotting. The name should match the object name (e.g.
-#' `"mtry"`, `"neighbors"`, etc.)
+#' @param label An optional character string that can be used for
+#' printing and plotting.
+#'
+#' @param name A required character string for the name of the parameter. This
+#' should match the name of the resulting function (i.e. `mtry()` has the
+#' name `"mtry"`).
 #'
 #' @param id An optional single character string. This should be either the
 #' name of a `model_spec` class from `parsnip` (such as `rand_forest`) or
@@ -51,11 +54,12 @@
 #' # corresponding to the number of subgroups.
 #' num_subgroups <- function(range = c(1L, 20L), trans = NULL) {
 #'   new_quant_param(
+#'     name = "num_subgroups",
 #'     type = "integer",
 #'     range = range,
 #'     inclusive = c(TRUE, TRUE),
 #'     trans = trans,
-#'     label = c(num_subgroups = "# Subgroups"),
+#'     label = "# Subgroups",
 #'     finalize = NULL
 #'   )
 #' }
@@ -76,7 +80,8 @@ NULL
 #' @rdname new-param
 #' @importFrom scales is.trans
 #' @importFrom rlang abort
-new_quant_param <- function(type = c("double", "integer"),
+new_quant_param <- function(name,
+                            type = c("double", "integer"),
                             range,
                             inclusive,
                             default = unknown(),
@@ -110,6 +115,7 @@ new_quant_param <- function(type = c("double", "integer"),
   }
 
   check_label(label)
+  check_name(name)
   check_finalize(finalize)
   check_id(id)
 
@@ -117,6 +123,7 @@ new_quant_param <- function(type = c("double", "integer"),
   names(inclusive) <- c("lower", "upper")
 
   res <- list(
+    name = name,
     type = type,
     range = range,
     inclusive = inclusive,
@@ -158,7 +165,8 @@ new_quant_param <- function(type = c("double", "integer"),
 
 #' @export
 #' @rdname new-param
-new_qual_param <- function(type = c("character", "logical"),
+new_qual_param <- function(name,
+                           type = c("character", "logical"),
                            values,
                            default = unknown(),
                            label = NULL,
@@ -182,10 +190,12 @@ new_qual_param <- function(type = c("character", "logical"),
   }
 
   check_label(label)
+  check_name(name)
   check_finalize(finalize)
   check_id(id)
 
   res <- list(
+    name = name,
     type = type,
     default = default,
     label = label,

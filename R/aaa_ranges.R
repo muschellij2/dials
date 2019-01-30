@@ -93,6 +93,7 @@ range_set <- function(object, range) {
   if (inherits(object, "quant_param")) {
     object <-
       new_quant_param(
+        name = object$name,
         type = object$type,
         range = range,
         inclusive = object$inclusive,
