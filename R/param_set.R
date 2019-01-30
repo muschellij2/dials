@@ -178,8 +178,9 @@ add_grid_tbl_rows <- function(type, x, ...) {
   validate_valid_names(x, names)
 
   n <- unname(name_vals)
+  # Validate integerish, but coerce to double (to allow for Inf)
   validate_all_integerish(n)
-  n <- purrr::map_int(n, as.integer)
+  n <- map_dbl(n, as.double)
 
   grid_tbl <- tibble::add_row(x$grid_tbl, name = names, type = type, n = n)
 
@@ -411,8 +412,8 @@ validate_grid_tbl_structure <- function(grid_tbl) {
     abort("The `type` column must be a character vector.")
   }
 
-  if (!is.integer(grid_tbl$n)) {
-    abort("The `n` column must be an integer vector.")
+  if (!is.numeric(grid_tbl$n)) {
+    abort("The `n` column must be a numeric vector.")
   }
 
   if (anyDuplicated(grid_tbl$name)) {
@@ -423,10 +424,10 @@ validate_grid_tbl_structure <- function(grid_tbl) {
 }
 
 validate_all_integerish <- function(x) {
-  all_integerish <- all(purrr::map_lgl(x, rlang::is_integerish))
+  all_integerish <- all(purrr::map_lgl(x, rlang::is_integerish, n = 1L))
 
   if (!all_integerish) {
-    abort("All values of `...` must be integers.")
+    abort("All values of `...` must be size 1 integers.")
   }
 
   invisible(x)
@@ -486,3 +487,23 @@ validate_all_finalized <- function(param_box_params) {
 }
 
 validate_name <- check_name
+
+validate_unique_names <- function(x) {
+  if (!has_unique_names(x)) {
+    abort("`...` must have unique names.")
+  }
+}
+
+has_unique_names <- function(x) {
+  nms <- names(x)
+
+  if (length(nms) != length(x)) {
+    return(FALSE)
+  }
+
+  if (any(is.na(nms) | nms == "")) {
+    return(FALSE)
+  }
+
+  !anyDuplicated(nms)
+}
