@@ -1,5 +1,3 @@
-context("test-validate")
-
 context("qualitative parameter values")
 
 test_param_1 <- new_qual_param(
