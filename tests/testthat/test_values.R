@@ -63,7 +63,7 @@ test_param_2 <-
     type = "integer",
     range = c(2.1, 5.3),
     inclusive = c(TRUE, TRUE),
-    trans = sqrt_trans(),
+    trans = scales::sqrt_trans(),
     default = sqrt(2),
     label = "param"
   )
@@ -83,7 +83,7 @@ test_param_4 <-
     type = "double",
     range = 0:1,
     inclusive = c(TRUE, TRUE),
-    trans = sqrt_trans(),
+    trans = scales::sqrt_trans(),
     default = sqrt(.6),
     label = "param"
   )
