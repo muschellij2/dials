@@ -43,7 +43,7 @@ merge.model_spec.tbl_grid <- function(x, y, ...) {
 
   update_method <- get_update_function(class(x)[1])
 
-  vry <- varying_args(x, full = FALSE)
+  vry <- parsnip::varying_args(x, full = FALSE)
 
   y <- fill_missing_ids(y, vry)
 
@@ -88,7 +88,7 @@ merge.recipe.default <- function(x, y, ...) {
 #' @export
 merge.recipe.tbl_grid <- function(x, y, ...) {
 
-  vry <- varying_args(x, full = FALSE)
+  vry <- parsnip::varying_args(x, full = FALSE)
 
   y <- fill_missing_ids(y, vry)
 

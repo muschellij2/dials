@@ -17,6 +17,7 @@ VignetteBuilder: knitr
 Imports:
     glue,
     magrittr,
+    parsnip,
     purrr,
     tibble,
     rlang,
@@ -30,3 +31,5 @@ Suggests:
     covr,
     dplyr,
     kernlab
+Remotes:
+    tidymodels/parsnip
