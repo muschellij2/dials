@@ -223,14 +223,14 @@ grid_generate.param_set <- function(x, default = "regular", n = 10) {
 #' @export
 grid_generate.grid_set <- function(x, default = "regular", n = 10) {
 
+  validate_default(default)
+  validate_integerish(n, "n")
+
   if (length(x$params) == 0L) {
     return(new_tbl_grid(tbl_grid_row()))
   }
 
   validate_all_finalized(x$params)
-
-  validate_default(default)
-  validate_integerish(n, "n")
 
   param_nms <- purrr::map_chr(x$params, function(.x) .x$name)
   grid_nms <- x$grid_tbl$name
@@ -748,7 +748,8 @@ validate_default <- function(x) {
 
   if (!rlang::is_scalar_character(x)) {
     abort(glue(
-      "`default` must be a character of length 1, not length {length(x)}."
+      "`default` must be a `character` of length 1, ",
+      "not a `{class(x)[1]}` of length {length(x)}."
     ))
   }
 
