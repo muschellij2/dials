@@ -41,9 +41,13 @@ merge.model_spec.default <- function(x, y, ...) {
 #' @export
 merge.model_spec.tbl_grid <- function(x, y, ...) {
 
-  update_method <- get_update_function(class(x)[1])
-
   vry <- parsnip::varying_args(x, full = FALSE)
+
+  # model_spec is not varying
+  if (nrow(vry) == 0L) {
+    grid <- tibble::tibble(specs = list(x))
+    return(grid)
+  }
 
   y <- fill_missing_ids(y, vry)
 
@@ -57,6 +61,8 @@ merge.model_spec.tbl_grid <- function(x, y, ...) {
   nrow_seq <- seq_len(nrow(grid))
 
   param_obj <- list(object = x)
+
+  update_method <- get_update_function(class(x)[1])
 
   grid$specs <- purrr::map(nrow_seq, ~{
 
@@ -90,6 +96,12 @@ merge.recipe.tbl_grid <- function(x, y, ...) {
 
   vry <- parsnip::varying_args(x, full = FALSE)
 
+  # recipe is not varying
+  if (nrow(vry) == 0L) {
+    grid <- tibble::tibble(preprocessor = list(x))
+    return(grid)
+  }
+
   y <- fill_missing_ids(y, vry)
 
   validate_varying_are_in_grid(y, vry)
@@ -103,7 +115,7 @@ merge.recipe.tbl_grid <- function(x, y, ...) {
 
   vry <- simple_unite(vry, remove = FALSE)
 
-  grid$recipes <- purrr::map(grid_t, update_recipe, rec = x, vry_tbl = vry)
+  grid$preprocessor <- purrr::map(grid_t, update_recipe, rec = x, vry_tbl = vry)
 
   grid
 }

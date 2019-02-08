@@ -15,6 +15,14 @@ pre-configured object `mtry` is now a function, `mtry()`, with arguments for the
 `range` and the `trans`form. This provides greater flexibility in parameter
 creation, and should feel more natural.
 
+* The `merge()` method for a `recipe` now returns a tibble with a column named
+`"preprocessor"` rather than `"recipes"` to be more general. In the future,
+a preprocessor could be a recipe or a `"terms"` object.
+
+* The `merge()` methods for a `recipe` / `model_spec` and a grid now return a 
+1 row tibble containing the `recipe` / `model_spec` if the object is not 
+varying.
+
 * The `label` argument to `new_quant_param()` and `new_qual_param()` has been separated into `name` and `label` for clarity. This is a developer-facing change and only matters if you create your own custom parameters.
 
 ## Other changes
