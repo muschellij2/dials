@@ -121,6 +121,32 @@ merge.recipe.tbl_grid <- function(x, y, ...) {
 }
 
 #' @rdname merge.model_spec
+#' @export merge.formula
+#' @method merge formula
+#' @export
+merge.formula <- function(x, y, ...) {
+  UseMethod("merge.formula", y)
+}
+
+#' @method merge.formula default
+#' @export
+merge.formula.default <- function(x, y, ...) {
+  abort("`x` is a 'formula', but `y` is not a known mergable type.")
+}
+
+#' @rdname merge.model_spec
+#' @method merge.formula tbl_grid
+#' @export
+merge.formula.tbl_grid <- function(x, y, ...) {
+
+  # return a 1 row tibble simply containing the formula
+  # until we have more infrastructure for varying formulas
+  grid <- tibble::tibble(preprocessor = list(x))
+
+  grid
+}
+
+#' @rdname merge.model_spec
 #' @export merge.tbl_grid
 #' @method merge tbl_grid
 #' @export
@@ -145,6 +171,13 @@ merge.tbl_grid.recipe <- function(x, y, ...) {
 #' @method merge.tbl_grid model_spec
 #' @export
 merge.tbl_grid.model_spec <- function(x, y, ...) {
+  merge(y, x, ...)
+}
+
+#' @rdname merge.model_spec
+#' @method merge.tbl_grid formula
+#' @export
+merge.tbl_grid.formula <- function(x, y, ...) {
   merge(y, x, ...)
 }
 

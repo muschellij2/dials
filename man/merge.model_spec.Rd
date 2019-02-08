@@ -5,9 +5,12 @@
 \alias{merge.model_spec.tbl_grid}
 \alias{merge.recipe}
 \alias{merge.recipe.tbl_grid}
+\alias{merge.formula}
+\alias{merge.formula.tbl_grid}
 \alias{merge.tbl_grid}
 \alias{merge.tbl_grid.recipe}
 \alias{merge.tbl_grid.model_spec}
+\alias{merge.tbl_grid.formula}
 \title{Merge parameter grid values into a parsnip object}
 \usage{
 \method{merge}{model_spec}(x, y, ...)
@@ -18,11 +21,17 @@
 
 \method{merge.recipe}{tbl_grid}(x, y, ...)
 
+\method{merge}{formula}(x, y, ...)
+
+\method{merge.formula}{tbl_grid}(x, y, ...)
+
 \method{merge}{tbl_grid}(x, y, ...)
 
 \method{merge.tbl_grid}{recipe}(x, y, ...)
 
 \method{merge.tbl_grid}{model_spec}(x, y, ...)
+
+\method{merge.tbl_grid}{formula}(x, y, ...)
 }
 \arguments{
 \item{x, y}{A combination of one \pkg{parsnip} model object (that has class
